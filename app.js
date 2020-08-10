@@ -76,11 +76,15 @@ app.post('/app/sites/:userid', (req,res)=>{
 		console.log(":; ", req.params.userid);
 		res.json({"status":"failure"});
 	} else {
-		let sql;
-		sql =  "insert into saveddetails values("+currUser+",'"
-		+req.body.username+"','"+req.body.password+"','"+req.body.website+"')";
+		let sql = "select password from userdetails where userid="+currUser;
 		con.query(sql,function(err,result,fields){
-			res.json({"status":"success"});
+			let currPass = result[0].password;
+			console.log("currPass: ", currPass);
+			sql =  "insert into saveddetails values("+currUser+",'"
+			+req.body.username+"',MD5('"+req.body.password+"'),'"+req.body.website+"')";
+			con.query(sql,function(err,result,fields){
+				res.json({"status":"success"});
+			})
 		})
 	}
 
